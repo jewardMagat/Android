@@ -95,6 +95,7 @@ public class MainActivity extends ActionBarActivity {
 		buttonClick.setDisplayValue(clearButton, displayNum, displayEquation,  "");
 		buttonClick.setDisplayValue(delButton, displayNum, displayEquation,  "");
 		buttonClick.setDisplayValue(percentageButton, displayNum, displayEquation, "%");
+		buttonClick.setDisplayValue(signButton, displayNum, displayEquation, "");
 		buttonClick.compute(equalsButton, displayNum,displayEquation);
 		
 	}

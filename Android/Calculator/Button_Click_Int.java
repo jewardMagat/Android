@@ -8,8 +8,16 @@ public class Button_Click_Int {
 
 	private Double num = 0.0;
 	private Double result = 0.0;
+	private Double percentageData = 0.0;
 	private int operatorLog = 0;
 	private int inputCount = 0;
+	private int clickCount = 0;
+	private int counter = 0;
+	private Double positiveData = 0.0;
+	private Double negativeData = 0.0;
+	
+	
+	
 	private boolean isNumber = true;
 
 	private boolean decimalButtonState = true;
@@ -18,6 +26,9 @@ public class Button_Click_Int {
 	private boolean equationState = false;
 	private boolean computationDone = false;
 	private boolean isPercentage = false;
+	private boolean percentageIsAllowed = false;
+	private boolean deleteIsAllowed = false;
+
 
 	MainActivity activity = new MainActivity();
 
@@ -25,7 +36,8 @@ public class Button_Click_Int {
 			final String input) {
 
 		button.setOnClickListener(new View.OnClickListener() {
-
+		int length;
+		
 			@Override
 			public void onClick(View v) {
 
@@ -48,9 +60,9 @@ public class Button_Click_Int {
 					break;
 
 				case R.id.periodButton:
-					if (decimalButtonState) {
+					if (decimalButtonState) {						
+						display.setText(display.getText() + input);
 						decimalButtonState = false;
-						display.setText(display.getText() + input);					
 					} else
 						display.setText(display.getText());
 					break;
@@ -61,18 +73,39 @@ public class Button_Click_Int {
 					break;
 					
 				case R.id.delButton:
-					int length = display.getText().length();
+					if(deleteIsAllowed){
+						length = display.getText().length();
+						
+						if(length >0){
+							display.getText().delete(length-1, length);
+						}
+					}					
+					break;
 					
-					if(length >0){
-						display.getText().delete(length-1, length);
-					}
+				case R.id.signButton:
 					
+					
+					
+					counter++;
+					
+					switch(counter){
+						case 1:
+							negativeData = Double.parseDouble(display.getText().toString())* -1;
+							display.setText(Double.toString(negativeData));
+							break;
+						case 2:
+							positiveData = negativeData * -1;
+							display.setText(Double.toString(positiveData));
+							counter = 0;
+							break;
+						default:
+							display.setText("");
+							break;
+					}	
 					break;
 				
 				case R.id.percentButton:
-					isPercentage = true;					
-					display.setText(display.getText().toString() + input);
-					//mathematicalOperation(0, input, display, secondDisplay);
+					handlePercentage(display, length, input);
 					break;
 
 				default:
@@ -80,6 +113,8 @@ public class Button_Click_Int {
 					if(computationDone)
 						display.setText("");
 					
+					deleteIsAllowed = true;
+					percentageIsAllowed = true;
 					computationDone = false;
 					isPercentage = false;
 					operationState = true;
@@ -99,12 +134,15 @@ public class Button_Click_Int {
 				secondDisplay.setText(secondDisplay.getText());
 				
 			}else{
+				decimalButtonState = true;
+				clickCount = 0;
 				isNumber = false;
 				countNumericInputs(display);
 				operationState = false;				
-				secondDisplay.setText(secondDisplay.getText().toString() + display.getText().toString() + input);
+					secondDisplay.setText(secondDisplay.getText().toString() + display.getText().toString() + input);
 				display.setText("");
 				equalState = true;
+				isPercentage = false;
 				operatorLog = code;
 				
 				if(equationState){
@@ -117,7 +155,6 @@ public class Button_Click_Int {
 	}
 
 	public void countNumericInputs(EditText display) {
-		int length = display.getText().length();
 		
 		if (!isNumber) {
 			inputCount++;
@@ -125,13 +162,11 @@ public class Button_Click_Int {
 			if (inputCount == 1) {
 				
 				if(isPercentage){
-					display.getText().delete(length-1, length);
-					result = Double.parseDouble(display.getText().toString())/100;
+					result = percentageData;
 				}
 				else{
 					result = Double.parseDouble(display.getText().toString());
-				}
-					
+				}				
 			}
 
 			else {
@@ -150,7 +185,14 @@ public class Button_Click_Int {
 
 				if(equalState){
 					computationDone = true;
-					num = Double.parseDouble(display.getText().toString());
+					
+					if(isPercentage){
+						int length = display.getText().length();
+						display.getText().delete(length-1, length);
+						
+						num = Double.parseDouble(display.getText().toString());
+					}else
+						num = Double.parseDouble(display.getText().toString());
 					
 					executeOperation(display);
 					display.setText("");
@@ -160,19 +202,26 @@ public class Button_Click_Int {
 						secondDisplay.setText("Syntax error");
 						operatorLog = 0;
 						result = 0.0;
+						deleteIsAllowed = false;
 						isNumber = true;
 						decimalButtonState = true;
 						operationState = false;
 						equalState= false;
 						equationState = true;
 						inputCount = 0;
+						isPercentage = false;
+						percentageData = 0.0;
+						percentageIsAllowed = false;
 						display.setText("");
 					}
 	
 					else {
 
 						if (num % 1 == 0){
-							secondDisplay.setText(secondDisplay.getText() + "" + num.intValue() + " = ");
+							if(isPercentage)
+								secondDisplay.setText(secondDisplay.getText() + "" + num.intValue() + "%" + " = ");
+							else
+								secondDisplay.setText(secondDisplay.getText() + "" + num.intValue() + " = ");
 							display.setText(roundedData());
 						}
 						else{
@@ -183,12 +232,16 @@ public class Button_Click_Int {
 						operatorLog = 0;
 						result = 0.0;
 						num = 0.0;
+						deleteIsAllowed = false;
 						isNumber = true;
-						decimalButtonState = true;
+						decimalButtonState = false;
 						operationState = true;
 						equalState= false;
 						equationState = true;
 						inputCount = 0;
+						isPercentage = false;
+						percentageIsAllowed = false;
+						percentageData = 0.0;
 					}
 				}
 				else{
@@ -221,26 +274,27 @@ public class Button_Click_Int {
 
 		switch (operatorLog) {
 			case 1:
-				if(isPercentage)
-					result += Double.parseDouble(display.getText().toString())/100;
+				if(isPercentage){
+					result += percentageData;
+				}
 				else
 					result += Double.parseDouble(display.getText().toString());
 				break;
 			case 2:
 				if(isPercentage)
-					result -= Double.parseDouble(display.getText().toString())/100;
+					result -= percentageData;
 				else
 					result -= Double.parseDouble(display.getText().toString());
 				break;
 			case 3:
 				if(isPercentage)
-					result *= Double.parseDouble(display.getText().toString())/100;
+					result *= percentageData;
 				else
 					result *= Double.parseDouble(display.getText().toString());
 				break;
 			case 4:
 				if(isPercentage)
-					result /= Double.parseDouble(display.getText().toString())/100;
+					result /= percentageData;
 				else
 					result /= Double.parseDouble(display.getText().toString());
 				break;
@@ -250,7 +304,47 @@ public class Button_Click_Int {
 		}
 	}
 	
-
+	public void handlePercentage(EditText display, int length, String input){
+		if(percentageIsAllowed){
+			clickCount++;
+			
+			if(clickCount >= 2){
+				display.setText(display.getText());
+			}
+				
+			else{
+				isPercentage = true;
+				percentageData = 0.0;					
+				display.setText(display.getText().toString() + input);
+				
+				length = display.getText().length();
+				display.getText().delete(length-1, length);
+								
+				percentageData = Double.parseDouble(display.getText().toString())/100;
+				
+				display.setText(display.getText().toString() + input);
+			}
+		}			
+	}
+	
+	public Double signedNumber(EditText display){
+		Double data = 0.0;
+		int counter = 0;
+		
+		counter++;
+		
+		switch(counter){
+			case 1:
+				data = Double.parseDouble(display.getText().toString())* -1;
+				break;
+			case 2:
+				data = Double.parseDouble(display.getText().toString())* 1;
+				counter = 0;
+			default:
+				break;
+		}		
+		return data;
+	}
 }
 
 
