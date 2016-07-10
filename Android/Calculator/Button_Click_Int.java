@@ -33,6 +33,7 @@ public class Button_Click_Int {
 	private boolean signIsAllowed = false;
 	
 	private boolean checkData = false;
+	private boolean buttonIsAllowed = false;
 
 
 	MainActivity activity = new MainActivity();
@@ -81,7 +82,7 @@ public class Button_Click_Int {
 					result = 0.0;
 					num = 0.0;
 					deleteIsAllowed = false;
-					signIsAllowed = true;
+					signIsAllowed = false;
 					isNumber = true;
 					decimalButtonState = true;
 					operationState = true;
@@ -91,8 +92,7 @@ public class Button_Click_Int {
 					isPercentage = false;
 					percentageIsAllowed = false;
 					percentageData = 0.0;
-					negativeData = 0.0;
-					positiveData = 0.0;
+					counter = 0;
 					break;
 					
 				case R.id.delButton:
@@ -106,60 +106,41 @@ public class Button_Click_Int {
 					break;
 					
 				case R.id.signButton:
-					
-					if(checkData){
-						rawData = Double.parseDouble(display.getText().toString());
-						checkData = false;
-					}
-						
-					
 					if(signIsAllowed){
-					
+						if(checkData){
+							negativeData = 0.0;
+							positiveData = 0.0;
+							rawData = Double.parseDouble(display.getText().toString());
+							checkData = false;
+						}
+	
+						counter++;
 						
-						if(rawData % 1 == 0){
-							counter++;
-							
-							switch(counter){
-								case 1:
-									isANegativeNumber = true;
-									negativeData = rawData* -1;
+						switch(counter){
+							case 1:
+								isANegativeNumber = true;
+								negativeData = rawData* -1;
+								
+								if(rawData % 1 == 0)
 									display.setText(Integer.toString(negativeData.intValue()));
-									break;
-								
-								case 2:
-									positiveData = negativeData * -1;
-									display.setText(Integer.toString(positiveData.intValue()));
-									counter = 0;
-									break;
-								default:
-									isANegativeNumber = true;
-									display.setText("");
-									break;
-							}	
-						}
-						else{
-							counter++;
-							
-							switch(counter){
-								case 1:
-									isANegativeNumber = true;
-									negativeData = rawData* -1;
+								else
 									display.setText(Double.toString(negativeData));
-									break;
-								
-								case 2:
-									positiveData = negativeData * -1;
+								break;
+							
+							case 2:
+								positiveData = negativeData * -1;
+								if(rawData % 1 == 0)
+									display.setText(Integer.toString(positiveData.intValue()));
+								else
 									display.setText(Double.toString(positiveData));
-									counter = 0;
-									break;
-								default:
-									isANegativeNumber = true;
-									display.setText("");
-									break;
-							}	
-						}
-						
-						
+								counter = 0;
+								break;
+							
+							default:
+								//isANegativeNumber = true;
+								display.setText("");
+								break;
+							}			
 					}
 						
 					break;
@@ -172,6 +153,9 @@ public class Button_Click_Int {
 					
 					if(computationDone)
 						display.setText("");
+					
+					if(equalState)
+						buttonIsAllowed = true;
 					
 					deleteIsAllowed = true;
 					signIsAllowed= true;
@@ -195,6 +179,7 @@ public class Button_Click_Int {
 				secondDisplay.setText(secondDisplay.getText());
 				
 			}else{
+				signIsAllowed = false;
 				percentageIsAllowed = true;
 				counter = 0;
 				decimalButtonState = true;
@@ -252,7 +237,7 @@ public class Button_Click_Int {
 			@Override
 			public void onClick(View v) {
 
-				if(equalState){
+				if(buttonIsAllowed){
 					computationDone = true;
 					
 					if(isPercentage){
@@ -282,8 +267,7 @@ public class Button_Click_Int {
 						isPercentage = false;
 						percentageData = 0.0;
 						percentageIsAllowed = false;
-						negativeData = 0.0;
-						positiveData = 0.0;
+						
 						display.setText("");
 					}
 	
@@ -324,9 +308,8 @@ public class Button_Click_Int {
 						inputCount = 0;
 						isPercentage = false;
 						percentageIsAllowed = false;
+						buttonIsAllowed = false;
 						percentageData = 0.0;
-						negativeData = 0.0;
-						positiveData = 0.0;
 					}
 				}
 				else{
@@ -393,7 +376,7 @@ public class Button_Click_Int {
 		
 		signIsAllowed = false;
 		
-		if(percentageIsAllowed){
+		if((percentageIsAllowed)&&(buttonIsAllowed)){
 			clickCount++;
 			
 			if(clickCount >= 2){
