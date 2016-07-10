@@ -28,6 +28,10 @@ public class Button_Click_Int {
 	private boolean isPercentage = false;
 	private boolean percentageIsAllowed = false;
 	private boolean deleteIsAllowed = false;
+	private boolean isANegativeNumber = false;
+	private boolean signIsAllowed = false;
+	
+	private String percentageString = null;
 
 
 	MainActivity activity = new MainActivity();
@@ -60,6 +64,8 @@ public class Button_Click_Int {
 					break;
 
 				case R.id.periodButton:
+					deleteIsAllowed = true;
+					
 					if (decimalButtonState) {						
 						display.setText(display.getText() + input);
 						decimalButtonState = false;
@@ -70,6 +76,22 @@ public class Button_Click_Int {
 				case R.id.clearButton:
 					display.setText(input);
 					secondDisplay.setText(input);
+					operatorLog = 0;
+					result = 0.0;
+					num = 0.0;
+					deleteIsAllowed = false;
+					signIsAllowed = true;
+					isNumber = true;
+					decimalButtonState = true;
+					operationState = true;
+					equalState= false;
+					equationState = true;
+					inputCount = 0;
+					isPercentage = false;
+					percentageIsAllowed = false;
+					percentageData = 0.0;
+					negativeData = 0.0;
+					positiveData = 0.0;
 					break;
 					
 				case R.id.delButton:
@@ -83,25 +105,28 @@ public class Button_Click_Int {
 					break;
 					
 				case R.id.signButton:
-					
-					
-					
-					counter++;
-					
-					switch(counter){
-						case 1:
-							negativeData = Double.parseDouble(display.getText().toString())* -1;
-							display.setText(Double.toString(negativeData));
-							break;
-						case 2:
-							positiveData = negativeData * -1;
-							display.setText(Double.toString(positiveData));
-							counter = 0;
-							break;
-						default:
-							display.setText("");
-							break;
-					}	
+					if(signIsAllowed){
+						counter++;
+						
+						switch(counter){
+							case 1:
+								isANegativeNumber = true;
+								negativeData = Double.parseDouble(display.getText().toString())* -1;
+								display.setText(Double.toString(negativeData));
+								break;
+							
+							case 2:
+								positiveData = negativeData * -1;
+								display.setText(Double.toString(positiveData));
+								counter = 0;
+								break;
+							default:
+								isANegativeNumber = true;
+								display.setText("");
+								break;
+						}	
+					}
+						
 					break;
 				
 				case R.id.percentButton:
@@ -114,7 +139,8 @@ public class Button_Click_Int {
 						display.setText("");
 					
 					deleteIsAllowed = true;
-					percentageIsAllowed = true;
+					signIsAllowed= true;
+					//percentageIsAllowed = true;
 					computationDone = false;
 					isPercentage = false;
 					operationState = true;
@@ -134,15 +160,23 @@ public class Button_Click_Int {
 				secondDisplay.setText(secondDisplay.getText());
 				
 			}else{
+				percentageIsAllowed = true;
+				counter = 0;
 				decimalButtonState = true;
 				clickCount = 0;
 				isNumber = false;
 				countNumericInputs(display);
-				operationState = false;				
+				operationState = false;
+				
+				if(isANegativeNumber)
+					secondDisplay.setText(secondDisplay.getText().toString() + " (" + display.getText().toString() + ") " + input);
+				else
 					secondDisplay.setText(secondDisplay.getText().toString() + display.getText().toString() + input);
+				
 				display.setText("");
 				equalState = true;
 				isPercentage = false;
+				isANegativeNumber = false;
 				operatorLog = code;
 				
 				if(equationState){
@@ -203,6 +237,7 @@ public class Button_Click_Int {
 						operatorLog = 0;
 						result = 0.0;
 						deleteIsAllowed = false;
+						signIsAllowed = false;
 						isNumber = true;
 						decimalButtonState = true;
 						operationState = false;
@@ -212,6 +247,8 @@ public class Button_Click_Int {
 						isPercentage = false;
 						percentageData = 0.0;
 						percentageIsAllowed = false;
+						negativeData = 0.0;
+						positiveData = 0.0;
 						display.setText("");
 					}
 	
@@ -219,13 +256,23 @@ public class Button_Click_Int {
 
 						if (num % 1 == 0){
 							if(isPercentage)
-								secondDisplay.setText(secondDisplay.getText() + "" + num.intValue() + "%" + " = ");
+								if(isANegativeNumber)
+									secondDisplay.setText(secondDisplay.getText().toString() + " (" + num.intValue() + ") " + "%" + " = ");
+								else
+									secondDisplay.setText(secondDisplay.getText() + "" + num.intValue() + "%" + " = ");
 							else
-								secondDisplay.setText(secondDisplay.getText() + "" + num.intValue() + " = ");
+								if(isANegativeNumber)
+									secondDisplay.setText(secondDisplay.getText().toString() + " (" + num.intValue() + ") " + " = ");
+								else
+									secondDisplay.setText(secondDisplay.getText() + "" + num.intValue() + " = ");
+							
 							display.setText(roundedData());
 						}
 						else{
-							secondDisplay.setText(secondDisplay.getText() + "" + num + " = ");
+							if(isANegativeNumber)
+								secondDisplay.setText(secondDisplay.getText().toString() + " (" + num + ") " + " = ");
+							else
+								secondDisplay.setText(secondDisplay.getText() + "" + num + " = ");
 							display.setText(roundedData());
 						}
 	
@@ -233,8 +280,9 @@ public class Button_Click_Int {
 						result = 0.0;
 						num = 0.0;
 						deleteIsAllowed = false;
+						signIsAllowed = false;
 						isNumber = true;
-						decimalButtonState = false;
+						decimalButtonState = true;
 						operationState = true;
 						equalState= false;
 						equationState = true;
@@ -242,6 +290,8 @@ public class Button_Click_Int {
 						isPercentage = false;
 						percentageIsAllowed = false;
 						percentageData = 0.0;
+						negativeData = 0.0;
+						positiveData = 0.0;
 					}
 				}
 				else{
@@ -305,6 +355,9 @@ public class Button_Click_Int {
 	}
 	
 	public void handlePercentage(EditText display, int length, String input){
+		
+		signIsAllowed = false;
+		
 		if(percentageIsAllowed){
 			clickCount++;
 			
@@ -314,7 +367,7 @@ public class Button_Click_Int {
 				
 			else{
 				isPercentage = true;
-				percentageData = 0.0;					
+				//percentageData = 0.0;					
 				display.setText(display.getText().toString() + input);
 				
 				length = display.getText().length();
