@@ -15,6 +15,7 @@ public class Button_Click_Int {
 	private int counter = 0;
 	private Double positiveData = 0.0;
 	private Double negativeData = 0.0;
+	private Double rawData = 0.0;
 	
 	
 	
@@ -31,7 +32,7 @@ public class Button_Click_Int {
 	private boolean isANegativeNumber = false;
 	private boolean signIsAllowed = false;
 	
-	private String percentageString = null;
+	private boolean checkData = false;
 
 
 	MainActivity activity = new MainActivity();
@@ -105,26 +106,60 @@ public class Button_Click_Int {
 					break;
 					
 				case R.id.signButton:
-					if(signIsAllowed){
-						counter++;
+					
+					if(checkData){
+						rawData = Double.parseDouble(display.getText().toString());
+						checkData = false;
+					}
 						
-						switch(counter){
-							case 1:
-								isANegativeNumber = true;
-								negativeData = Double.parseDouble(display.getText().toString())* -1;
-								display.setText(Double.toString(negativeData));
-								break;
+					
+					if(signIsAllowed){
+					
+						
+						if(rawData % 1 == 0){
+							counter++;
 							
-							case 2:
-								positiveData = negativeData * -1;
-								display.setText(Double.toString(positiveData));
-								counter = 0;
-								break;
-							default:
-								isANegativeNumber = true;
-								display.setText("");
-								break;
-						}	
+							switch(counter){
+								case 1:
+									isANegativeNumber = true;
+									negativeData = rawData* -1;
+									display.setText(Integer.toString(negativeData.intValue()));
+									break;
+								
+								case 2:
+									positiveData = negativeData * -1;
+									display.setText(Integer.toString(positiveData.intValue()));
+									counter = 0;
+									break;
+								default:
+									isANegativeNumber = true;
+									display.setText("");
+									break;
+							}	
+						}
+						else{
+							counter++;
+							
+							switch(counter){
+								case 1:
+									isANegativeNumber = true;
+									negativeData = rawData* -1;
+									display.setText(Double.toString(negativeData));
+									break;
+								
+								case 2:
+									positiveData = negativeData * -1;
+									display.setText(Double.toString(positiveData));
+									counter = 0;
+									break;
+								default:
+									isANegativeNumber = true;
+									display.setText("");
+									break;
+							}	
+						}
+						
+						
 					}
 						
 					break;
@@ -140,7 +175,7 @@ public class Button_Click_Int {
 					
 					deleteIsAllowed = true;
 					signIsAllowed= true;
-					//percentageIsAllowed = true;
+					checkData= true;
 					computationDone = false;
 					isPercentage = false;
 					operationState = true;
