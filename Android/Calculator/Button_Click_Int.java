@@ -66,6 +66,7 @@ public class Button_Click_Int {
 					break;
 
 				case R.id.periodButton:
+					isPercentage = true;
 					deleteIsAllowed = true;
 					
 					if (decimalButtonState) {						
@@ -158,6 +159,7 @@ public class Button_Click_Int {
 						buttonIsAllowed = true;
 					
 					deleteIsAllowed = true;
+					decimalButtonState = true;
 					signIsAllowed= true;
 					checkData= true;
 					computationDone = false;
@@ -182,14 +184,14 @@ public class Button_Click_Int {
 				signIsAllowed = false;
 				percentageIsAllowed = true;
 				counter = 0;
-				decimalButtonState = true;
+				decimalButtonState = false;
 				clickCount = 0;
 				isNumber = false;
 				countNumericInputs(display);
 				operationState = false;
 				
 				if(isANegativeNumber)
-					secondDisplay.setText(secondDisplay.getText().toString() + " (" + display.getText().toString() + ") " + input);
+					secondDisplay.setText(secondDisplay.getText().toString() + "(" + display.getText().toString() + ")" + input);
 				else
 					secondDisplay.setText(secondDisplay.getText().toString() + display.getText().toString() + input);
 				
@@ -259,7 +261,7 @@ public class Button_Click_Int {
 						deleteIsAllowed = false;
 						signIsAllowed = false;
 						isNumber = true;
-						decimalButtonState = true;
+						decimalButtonState = false;
 						operationState = false;
 						equalState= false;
 						equationState = true;
@@ -274,24 +276,36 @@ public class Button_Click_Int {
 					else {
 
 						if (num % 1 == 0){
-							if(isPercentage)
+							if(isPercentage){
 								if(isANegativeNumber)
-									secondDisplay.setText(secondDisplay.getText().toString() + " (" + num.intValue() + ") " + "%" + " = ");
+									secondDisplay.setText(secondDisplay.getText().toString() + "(" + num.intValue() + ")" + "%" + " = ");
 								else
 									secondDisplay.setText(secondDisplay.getText() + "" + num.intValue() + "%" + " = ");
-							else
+							}
+							else{
 								if(isANegativeNumber)
-									secondDisplay.setText(secondDisplay.getText().toString() + " (" + num.intValue() + ") " + " = ");
+									secondDisplay.setText(secondDisplay.getText().toString() + "(" + num.intValue() + ")" + " = ");
 								else
 									secondDisplay.setText(secondDisplay.getText() + "" + num.intValue() + " = ");
+							}
 							
 							display.setText(roundedData());
 						}
 						else{
-							if(isANegativeNumber)
-								secondDisplay.setText(secondDisplay.getText().toString() + " (" + num + ") " + " = ");
-							else
-								secondDisplay.setText(secondDisplay.getText() + "" + num + " = ");
+							if(isPercentage){
+								if(isANegativeNumber)
+									secondDisplay.setText(secondDisplay.getText().toString() + "(" + num + ")" + "%" + " = ");
+								else
+									secondDisplay.setText(secondDisplay.getText() + "" + num + "%" + " = ");
+							}
+								
+							else{
+								if(isANegativeNumber)
+									secondDisplay.setText(secondDisplay.getText().toString() + "(" + num + ")" + " = ");
+								else
+									secondDisplay.setText(secondDisplay.getText() + "" + num + " = ");
+							}
+							
 							display.setText(roundedData());
 						}
 	
@@ -301,7 +315,7 @@ public class Button_Click_Int {
 						deleteIsAllowed = false;
 						signIsAllowed = false;
 						isNumber = true;
-						decimalButtonState = true;
+						decimalButtonState = false;
 						operationState = true;
 						equalState= false;
 						equationState = true;
