@@ -30,7 +30,6 @@ public class MainActivity extends ActionBarActivity {
 	equalsButton,
 	periodButton,
 	clearButton,
-	delButton,
 	percentageButton,
 	signButton;
 	
@@ -46,6 +45,9 @@ public class MainActivity extends ActionBarActivity {
 		
 		displayNum = (EditText)findViewById(R.id.editTextNum);
 		displayEquation = (EditText)findViewById(R.id.editTextEquation);
+		
+		displayNum.setKeyListener(null);
+		displayEquation.setKeyListener(null);
 		
 		
 	
@@ -68,7 +70,6 @@ public class MainActivity extends ActionBarActivity {
 		divideButton = (Button)findViewById(R.id.divideButton);
 		equalsButton = (Button)findViewById(R.id.equalsButton);
 		periodButton = (Button)findViewById(R.id.decimalButton);
-		delButton = (Button)findViewById(R.id.delButton);
 		clearButton = (Button)findViewById(R.id.clearButton);
 		percentageButton = (Button)findViewById(R.id.percentButton);
 		signButton = (Button)findViewById(R.id.signButton);
@@ -93,7 +94,6 @@ public class MainActivity extends ActionBarActivity {
 		buttonClick.setDisplayValue(divideButton, displayNum, displayEquation, "÷");
 		buttonClick.setDisplayValue(periodButton, displayNum, displayEquation,  ".");
 		buttonClick.setDisplayValue(clearButton, displayNum, displayEquation,  "");
-		buttonClick.setDisplayValue(delButton, displayNum, displayEquation,  "");
 		buttonClick.setDisplayValue(percentageButton, displayNum, displayEquation, "%");
 		buttonClick.setDisplayValue(signButton, displayNum, displayEquation, "");
 		buttonClick.compute(equalsButton, displayNum,displayEquation);

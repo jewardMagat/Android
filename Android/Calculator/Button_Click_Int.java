@@ -13,7 +13,7 @@ public class Button_Click_Int {
 	private int operatorLog = 0;
 	private int inputCount = 0;
 	private int clickCount = 0;
-	private int counter = 0;
+	private int signCounter = 0;
 	private Double positiveData = 0.0;
 	private Double negativeData = 0.0;
 	private Double rawData = 0.0;
@@ -23,21 +23,21 @@ public class Button_Click_Int {
 	
 	private boolean isNumber = true;
 
-	private boolean decimalButtonState = true;
+	private boolean decimalButtonState = false;
 	private boolean operationState = false;
 	private boolean equalState = false;
 	private boolean equationState = false;
 	private boolean computationDone = false;
 	private boolean isPercentage = false;
 	private boolean percentageIsAllowed = false;
-	private boolean deleteIsAllowed = false;
 	private boolean isANegativeNumber = false;
 	private boolean signIsAllowed = false;
 	
 	private boolean checkData = false;
 	private boolean buttonIsAllowed = false;
 	private int cursorCount = 0;
-	private String deletedData= "";
+
+
 
 
 	MainActivity activity = new MainActivity();
@@ -73,7 +73,6 @@ public class Button_Click_Int {
 
 				case R.id.decimalButton:
 					isPercentage = true;
-					deleteIsAllowed = true;
 					
 					if (decimalButtonState) {						
 						display.setText(display.getText() + input);
@@ -88,11 +87,10 @@ public class Button_Click_Int {
 					operatorLog = 0;
 					result = 0.0;
 					num = 0.0;
-					deleteIsAllowed = false;
 					signIsAllowed = false;
 					isNumber = true;
-					decimalButtonState = true;
-					operationState = true;
+					decimalButtonState = false;
+					operationState = false;
 					equalState= false;
 					equationState = true;
 					inputCount = 0;
@@ -101,21 +99,7 @@ public class Button_Click_Int {
 					buttonIsAllowed = false;
 					percentageData = 0.0;
 					cursorCount = 0;
-					counter = 0;
-					break;
-					
-					
-				case R.id.delButton:
-					if(deleteIsAllowed){
-						length = display.getText().length();
-						deletedData = "";
-
-						if(length >0){
-							display.getText().delete(length-1, length);
-							deletedData = display.getText().toString();
-							deleteIsAllowed = false;
-						}
-					}					
+					signCounter = 0;
 					break;
 					
 				case R.id.signButton:				
@@ -127,10 +111,12 @@ public class Button_Click_Int {
 							rawData = Double.parseDouble(display.getText().toString());
 							checkData = false;
 						}
-	
-						counter++;
 						
-						switch(counter){
+						
+	
+						signCounter++;
+						
+						switch(signCounter){
 							case 1:
 								isANegativeNumber = true;
 								cursorCount++;
@@ -150,7 +136,7 @@ public class Button_Click_Int {
 									display.setText(Integer.toString(positiveData.intValue()));
 								else
 									display.setText(Double.toString(positiveData));
-								counter = 0;
+								signCounter = 0;
 								break;
 							
 							default:
@@ -175,11 +161,8 @@ public class Button_Click_Int {
 					
 					if(equalState)
 						buttonIsAllowed = true;
-					
-					if(deleteIsAllowed == false)
-						display.setText(deletedData + input);
-					else					
-						display.setText(display.getText() + input);
+									
+					display.setText(display.getText() + input);
 					
 					decimalButtonState = true;
 					signIsAllowed= true;
@@ -188,7 +171,6 @@ public class Button_Click_Int {
 					isPercentage = false;
 					operationState = true;
 					isNumber = true;				
-					deleteIsAllowed = true;
 					cursorCount++;
 					display.setSelection(cursorCount);
 					break;
@@ -203,13 +185,13 @@ public class Button_Click_Int {
 			if(!operationState){
 				display.setText("");
 				secondDisplay.setText(secondDisplay.getText());
-				
+							
 			}else{
 				cursorCount = 0;
 				buttonIsAllowed = false;
 				signIsAllowed = false;
 				percentageIsAllowed = true;
-				counter = 0;
+				signCounter = 0;
 				decimalButtonState = false;
 				clickCount = 0;
 				isNumber = false;
@@ -286,7 +268,6 @@ public class Button_Click_Int {
 						secondDisplay.setText("Syntax error");
 						operatorLog = 0;
 						result = 0.0;
-						deleteIsAllowed = false;
 						signIsAllowed = false;
 						isNumber = true;
 						decimalButtonState = false;
@@ -299,7 +280,7 @@ public class Button_Click_Int {
 						buttonIsAllowed = false;
 						percentageIsAllowed = false;
 						cursorCount = 0;
-						counter = 0;
+						signCounter = 0;
 						
 						display.setText("");
 					}
@@ -345,7 +326,6 @@ public class Button_Click_Int {
 						operatorLog = 0;
 						result = 0.0;
 						num = 0.0;
-						deleteIsAllowed = false;
 						signIsAllowed = false;
 						isNumber = true;
 						decimalButtonState = false;
@@ -358,11 +338,12 @@ public class Button_Click_Int {
 						buttonIsAllowed = false;
 						percentageData = 0.0;
 						cursorCount = 0;
-						counter = 0;
+						signCounter = 0;
 					}
 				}
 				else{
 					display.setText(display.getText());
+					display.setSelection(cursorCount);
 				}
 					
 			}
@@ -444,28 +425,13 @@ public class Button_Click_Int {
 				percentageData = Double.parseDouble(display.getText().toString())/100;
 				
 				display.setText(display.getText().toString() + input);
+				percentageIsAllowed = false;
 			}
+		
 		}			
 	}
 	
-	public Double signedNumber(EditText display){
-		Double data = 0.0;
-		int counter = 0;
-		
-		counter++;
-		
-		switch(counter){
-			case 1:
-				data = Double.parseDouble(display.getText().toString())* -1;
-				break;
-			case 2:
-				data = Double.parseDouble(display.getText().toString())* 1;
-				counter = 0;
-			default:
-				break;
-		}		
-		return data;
-	}
+
 }
 
 
