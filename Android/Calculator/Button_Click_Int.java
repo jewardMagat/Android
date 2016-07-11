@@ -37,6 +37,7 @@ public class Button_Click_Int {
 	private boolean checkData = false;
 	private boolean buttonIsAllowed = false;
 	private int cursorCount = 0;
+	private String deletedData= "";
 
 
 	MainActivity activity = new MainActivity();
@@ -107,9 +108,12 @@ public class Button_Click_Int {
 				case R.id.delButton:
 					if(deleteIsAllowed){
 						length = display.getText().length();
-						
+						deletedData = "";
+
 						if(length >0){
 							display.getText().delete(length-1, length);
+							deletedData = display.getText().toString();
+							deleteIsAllowed = false;
 						}
 					}					
 					break;
@@ -172,15 +176,19 @@ public class Button_Click_Int {
 					if(equalState)
 						buttonIsAllowed = true;
 					
-					deleteIsAllowed = true;
+					if(deleteIsAllowed == false)
+						display.setText(deletedData + input);
+					else					
+						display.setText(display.getText() + input);
+					
 					decimalButtonState = true;
 					signIsAllowed= true;
 					checkData= true;
 					computationDone = false;
 					isPercentage = false;
 					operationState = true;
-					isNumber = true;
-					display.setText(display.getText() + input);	
+					isNumber = true;				
+					deleteIsAllowed = true;
 					cursorCount++;
 					display.setSelection(cursorCount);
 					break;
