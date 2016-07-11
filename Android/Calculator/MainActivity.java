@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
 	
@@ -34,21 +34,21 @@ public class MainActivity extends ActionBarActivity {
 	percentageButton,
 	signButton;
 	
+
+	
 			
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-
-		
+	
 		Button_Click_Int buttonClick = new Button_Click_Int();
 		
 		displayNum = (EditText)findViewById(R.id.editTextNum);
-		displayEquation = (EditText)findViewById(R.id.EditTextEquation);
+		displayEquation = (EditText)findViewById(R.id.editTextEquation);
 		
 		
-		
+	
 		//numbers
 		num0Button = (Button)findViewById(R.id.num0Button);
 		num1Button = (Button)findViewById(R.id.num1Button);
@@ -67,7 +67,7 @@ public class MainActivity extends ActionBarActivity {
 		multiplyButton = (Button)findViewById(R.id.multiplyButton);
 		divideButton = (Button)findViewById(R.id.divideButton);
 		equalsButton = (Button)findViewById(R.id.equalsButton);
-		periodButton = (Button)findViewById(R.id.periodButton);
+		periodButton = (Button)findViewById(R.id.decimalButton);
 		delButton = (Button)findViewById(R.id.delButton);
 		clearButton = (Button)findViewById(R.id.clearButton);
 		percentageButton = (Button)findViewById(R.id.percentButton);
@@ -98,24 +98,5 @@ public class MainActivity extends ActionBarActivity {
 		buttonClick.setDisplayValue(signButton, displayNum, displayEquation, "");
 		buttonClick.compute(equalsButton, displayNum,displayEquation);
 		
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 }

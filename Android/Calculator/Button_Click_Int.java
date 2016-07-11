@@ -3,6 +3,7 @@ package test.calculator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class Button_Click_Int {
 
@@ -16,6 +17,7 @@ public class Button_Click_Int {
 	private Double positiveData = 0.0;
 	private Double negativeData = 0.0;
 	private Double rawData = 0.0;
+
 	
 	
 	
@@ -34,6 +36,7 @@ public class Button_Click_Int {
 	
 	private boolean checkData = false;
 	private boolean buttonIsAllowed = false;
+	private int cursorCount = 0;
 
 
 	MainActivity activity = new MainActivity();
@@ -46,11 +49,13 @@ public class Button_Click_Int {
 		
 			@Override
 			public void onClick(View v) {
-
+				
+				
 				switch (v.getId()) {
 
 				case R.id.addButton:
 					mathematicalOperation(1, input, display, secondDisplay);
+					
 					break;
 
 				case R.id.subtractButton:
@@ -65,7 +70,7 @@ public class Button_Click_Int {
 					mathematicalOperation(4, input, display, secondDisplay);
 					break;
 
-				case R.id.periodButton:
+				case R.id.decimalButton:
 					isPercentage = true;
 					deleteIsAllowed = true;
 					
@@ -92,9 +97,12 @@ public class Button_Click_Int {
 					inputCount = 0;
 					isPercentage = false;
 					percentageIsAllowed = false;
+					buttonIsAllowed = false;
 					percentageData = 0.0;
+					cursorCount = 0;
 					counter = 0;
 					break;
+					
 					
 				case R.id.delButton:
 					if(deleteIsAllowed){
@@ -106,9 +114,10 @@ public class Button_Click_Int {
 					}					
 					break;
 					
-				case R.id.signButton:
+				case R.id.signButton:				
 					if(signIsAllowed){
 						if(checkData){
+							
 							negativeData = 0.0;
 							positiveData = 0.0;
 							rawData = Double.parseDouble(display.getText().toString());
@@ -120,6 +129,7 @@ public class Button_Click_Int {
 						switch(counter){
 							case 1:
 								isANegativeNumber = true;
+								cursorCount++;
 								negativeData = rawData* -1;
 								
 								if(rawData % 1 == 0)
@@ -129,6 +139,8 @@ public class Button_Click_Int {
 								break;
 							
 							case 2:
+								isANegativeNumber = false;
+								cursorCount--;
 								positiveData = negativeData * -1;
 								if(rawData % 1 == 0)
 									display.setText(Integer.toString(positiveData.intValue()));
@@ -141,13 +153,15 @@ public class Button_Click_Int {
 								//isANegativeNumber = true;
 								display.setText("");
 								break;
-							}			
+							}
+						display.setSelection(cursorCount);
 					}
 						
 					break;
 				
 				case R.id.percentButton:
 					handlePercentage(display, length, input);
+					display.setSelection(cursorCount);
 					break;
 
 				default:
@@ -166,7 +180,9 @@ public class Button_Click_Int {
 					isPercentage = false;
 					operationState = true;
 					isNumber = true;
-					display.setText(display.getText() + input);					
+					display.setText(display.getText() + input);	
+					cursorCount++;
+					display.setSelection(cursorCount);
 					break;
 				}
 			}
@@ -181,6 +197,8 @@ public class Button_Click_Int {
 				secondDisplay.setText(secondDisplay.getText());
 				
 			}else{
+				cursorCount = 0;
+				buttonIsAllowed = false;
 				signIsAllowed = false;
 				percentageIsAllowed = true;
 				counter = 0;
@@ -240,6 +258,8 @@ public class Button_Click_Int {
 			public void onClick(View v) {
 
 				if(buttonIsAllowed){
+					
+					
 					computationDone = true;
 					
 					if(isPercentage){
@@ -268,7 +288,10 @@ public class Button_Click_Int {
 						inputCount = 0;
 						isPercentage = false;
 						percentageData = 0.0;
+						buttonIsAllowed = false;
 						percentageIsAllowed = false;
+						cursorCount = 0;
+						counter = 0;
 						
 						display.setText("");
 					}
@@ -308,7 +331,9 @@ public class Button_Click_Int {
 							
 							display.setText(roundedData());
 						}
-	
+						
+						display.setSelection(display.getText().length());
+						
 						operatorLog = 0;
 						result = 0.0;
 						num = 0.0;
@@ -324,6 +349,8 @@ public class Button_Click_Int {
 						percentageIsAllowed = false;
 						buttonIsAllowed = false;
 						percentageData = 0.0;
+						cursorCount = 0;
+						counter = 0;
 					}
 				}
 				else{
@@ -391,6 +418,7 @@ public class Button_Click_Int {
 		signIsAllowed = false;
 		
 		if((percentageIsAllowed)&&(buttonIsAllowed)){
+			cursorCount++;
 			clickCount++;
 			
 			if(clickCount >= 2){
