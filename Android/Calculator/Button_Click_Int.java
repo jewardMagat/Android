@@ -3,26 +3,23 @@ package test.calculator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 public class Button_Click_Int {
 
 	private Double num = 0.0;
 	private Double result = 0.0;
 	private Double percentageData = 0.0;
+	private Double positiveData = 0.0;
+	private Double negativeData = 0.0;
+	private Double rawData = 0.0;
+	
 	private int operatorLog = 0;
 	private int inputCount = 0;
 	private int clickCount = 0;
 	private int signCounter = 0;
-	private Double positiveData = 0.0;
-	private Double negativeData = 0.0;
-	private Double rawData = 0.0;
-
-	
-	
+	private int cursorCount = 0;
 	
 	private boolean isNumber = true;
-
 	private boolean decimalButtonState = false;
 	private boolean operationState = false;
 	private boolean equalState = false;
@@ -31,17 +28,13 @@ public class Button_Click_Int {
 	private boolean isPercentage = false;
 	private boolean percentageIsAllowed = false;
 	private boolean isANegativeNumber = false;
-	private boolean signIsAllowed = false;
-	
+	private boolean signIsAllowed = false;	
 	private boolean checkData = false;
 	private boolean buttonIsAllowed = false;
-	private int cursorCount = 0;
+	private boolean isDecimalAllowed = true;
+	private boolean isDigitAllowed = true;
 
-
-
-
-	MainActivity activity = new MainActivity();
-
+	
 	public void setDisplayValue(Button button, final EditText display, final EditText secondDisplay,
 			final String input) {
 
@@ -50,13 +43,11 @@ public class Button_Click_Int {
 		
 			@Override
 			public void onClick(View v) {
-				
-				
+							
 				switch (v.getId()) {
 
 				case R.id.addButton:
-					mathematicalOperation(1, input, display, secondDisplay);
-					
+					mathematicalOperation(1, input, display, secondDisplay);					
 					break;
 
 				case R.id.subtractButton:
@@ -72,11 +63,12 @@ public class Button_Click_Int {
 					break;
 
 				case R.id.decimalButton:
-					isPercentage = true;
-					
-					if (decimalButtonState) {						
-						display.setText(display.getText() + input);
+									
+					if ((decimalButtonState)&&(isDecimalAllowed)) {						
+						display.setText(display.getText() + input);						
+						isPercentage = true;
 						decimalButtonState = false;
+						isDecimalAllowed = false;
 					} else
 						display.setText(display.getText());
 					break;
@@ -98,11 +90,15 @@ public class Button_Click_Int {
 					percentageIsAllowed = false;
 					buttonIsAllowed = false;
 					percentageData = 0.0;
+					isDecimalAllowed = true;
+					isDigitAllowed= true;
 					cursorCount = 0;
 					signCounter = 0;
 					break;
 					
-				case R.id.signButton:				
+				case R.id.signButton:
+					
+					percentageIsAllowed = false;
 					if(signIsAllowed){
 						if(checkData){
 							
@@ -111,9 +107,7 @@ public class Button_Click_Int {
 							rawData = Double.parseDouble(display.getText().toString());
 							checkData = false;
 						}
-						
-						
-	
+
 						signCounter++;
 						
 						switch(signCounter){
@@ -140,7 +134,6 @@ public class Button_Click_Int {
 								break;
 							
 							default:
-								//isANegativeNumber = true;
 								display.setText("");
 								break;
 							}
@@ -155,24 +148,26 @@ public class Button_Click_Int {
 					break;
 
 				default:
+					if(isDigitAllowed){
+						if(computationDone)
+							display.setText("");
+						
+						if(equalState)
+							buttonIsAllowed = true;
+										
+						display.setText(display.getText() + input);
+						
+						decimalButtonState = true;
+						signIsAllowed= true;
+						checkData= true;
+						computationDone = false;
+						isPercentage = false;
+						operationState = true;
+						isNumber = true;				
+						cursorCount++;
+						display.setSelection(cursorCount);
+					}
 					
-					if(computationDone)
-						display.setText("");
-					
-					if(equalState)
-						buttonIsAllowed = true;
-									
-					display.setText(display.getText() + input);
-					
-					decimalButtonState = true;
-					signIsAllowed= true;
-					checkData= true;
-					computationDone = false;
-					isPercentage = false;
-					operationState = true;
-					isNumber = true;				
-					cursorCount++;
-					display.setSelection(cursorCount);
 					break;
 				}
 			}
@@ -187,6 +182,8 @@ public class Button_Click_Int {
 				secondDisplay.setText(secondDisplay.getText());
 							
 			}else{
+				isDigitAllowed = true;
+				isDecimalAllowed=true;
 				cursorCount = 0;
 				buttonIsAllowed = false;
 				signIsAllowed = false;
@@ -198,7 +195,7 @@ public class Button_Click_Int {
 				countNumericInputs(display);
 				operationState = false;
 				
-				if(isANegativeNumber)
+				if((isANegativeNumber)&&(equalState))
 					secondDisplay.setText(secondDisplay.getText().toString() + "(" + display.getText().toString() + ")" + input);
 				else
 					secondDisplay.setText(secondDisplay.getText().toString() + display.getText().toString() + input);
@@ -213,8 +210,7 @@ public class Button_Click_Int {
 					secondDisplay.setText(roundedData() + input);
 					display.setText("");
 					equationState = false;
-				}
-					
+				}					
 			}	
 	}
 
@@ -279,6 +275,8 @@ public class Button_Click_Int {
 						percentageData = 0.0;
 						buttonIsAllowed = false;
 						percentageIsAllowed = false;
+						isDecimalAllowed = true;
+						isDigitAllowed = true;
 						cursorCount = 0;
 						signCounter = 0;
 						
@@ -336,6 +334,8 @@ public class Button_Click_Int {
 						isPercentage = false;
 						percentageIsAllowed = false;
 						buttonIsAllowed = false;
+						isDecimalAllowed = true;
+						isDigitAllowed = true;
 						percentageData = 0.0;
 						cursorCount = 0;
 						signCounter = 0;
@@ -403,10 +403,12 @@ public class Button_Click_Int {
 	}
 	
 	public void handlePercentage(EditText display, int length, String input){
-		
-		signIsAllowed = false;
-		
+	
 		if((percentageIsAllowed)&&(buttonIsAllowed)){
+			
+			signIsAllowed = false;
+			decimalButtonState = false;
+			isDigitAllowed = false;
 			cursorCount++;
 			clickCount++;
 			
@@ -426,12 +428,9 @@ public class Button_Click_Int {
 				
 				display.setText(display.getText().toString() + input);
 				percentageIsAllowed = false;
-			}
-		
+			}		
 		}			
 	}
-	
-
 }
 
 

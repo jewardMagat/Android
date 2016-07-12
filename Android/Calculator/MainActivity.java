@@ -1,14 +1,11 @@
 package test.calculator;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 	
 	EditText displayNum, displayEquation; 
 	
@@ -32,9 +29,6 @@ public class MainActivity extends ActionBarActivity {
 	clearButton,
 	percentageButton,
 	signButton;
-	
-
-	
 			
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +42,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		displayNum.setKeyListener(null);
 		displayEquation.setKeyListener(null);
-		
-		
-	
+
 		//numbers
 		num0Button = (Button)findViewById(R.id.num0Button);
 		num1Button = (Button)findViewById(R.id.num1Button);
