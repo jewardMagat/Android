@@ -1,4 +1,4 @@
-package com.code_snippets;
+package com.calculator;
 
 import android.view.View;
 import android.widget.Button;
