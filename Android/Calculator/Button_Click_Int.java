@@ -1,4 +1,4 @@
-package test.calculator;
+package com.app.basic_calculator;
 
 import android.view.View;
 import android.widget.Button;
@@ -97,9 +97,10 @@ public class Button_Click_Int {
 					break;
 					
 				case R.id.signButton:
-					
-					percentageIsAllowed = false;
+									
 					if(signIsAllowed){
+						percentageIsAllowed = false;
+						
 						if(checkData){
 							
 							negativeData = 0.0;
