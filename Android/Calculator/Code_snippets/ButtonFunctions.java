@@ -12,7 +12,8 @@ public class ButtonFunctions {
 	private boolean initialState = true; 						// states if the calculator is in its initial State.
 	private boolean mathOperationIsAllowed = false; 			// states if it is allowed to press the mathematical operators.
 	private boolean isDelButtonAllowed = false;					// states if it is allowed to press delete button.
-	private boolean isDecimalButtonAllowed = true;
+	private boolean isDecimalButtonAllowed = true;				// states if is allowed to press the decimal button.
+	private boolean isSignButtonAllowed = true;
 	private boolean isComputationDone = false;					// states if the computation has been done.
 	private boolean refresh = false;							// states if it s needed to refresh the status of an object.
 	
@@ -33,6 +34,10 @@ public class ButtonFunctions {
 					case R.id.equalsButton:
 						compute(editTextInput,editTextEquation);
 						break;
+						
+					case R.id.signButton:
+						signedNumber(editTextInput);
+						break;
 					
 					case R.id.delButton:
 						deleteData(editTextInput);
@@ -40,6 +45,10 @@ public class ButtonFunctions {
 						
 					case R.id.decimalButton:
 						inputDecimalPoint(editTextInput);
+						break;
+					
+					case R.id.clearButton:
+						clearContents(editTextInput, editTextEquation);
 						break;
 				
 					default:
@@ -67,6 +76,7 @@ public class ButtonFunctions {
 			operationWasPressed = true;
 			numberWasPressed = false;
 			isDecimalButtonAllowed= true;
+			isSignButtonAllowed=true;
 			
 				
 				if (initialState) {
@@ -119,6 +129,7 @@ public class ButtonFunctions {
 			isComputationDone = true;
 			refresh = true;
 			isDecimalButtonAllowed = true;
+			isSignButtonAllowed= true;
 			computedResult = 0.0;
 		}			
 	}
@@ -141,17 +152,72 @@ public class ButtonFunctions {
 				isDelButtonAllowed = false;
 				numberWasPressed = false;
 				isDecimalButtonAllowed = true;
-			}
-			
+			}			
 		}
 	}
 	
+	//function for the decimal point
 	public void inputDecimalPoint(final EditText editTextInput){
+		
 		if((isDecimalButtonAllowed == true)&&(numberWasPressed == true)){
 			editTextInput.setText(editTextInput.getText().toString() + ".");
 			isDecimalButtonAllowed = false;
 		}			
 		else
 			editTextInput.setText(editTextInput.getText().toString());
+	}
+	
+	//function for clear button
+	public void clearContents(final EditText editTextNumbers, final EditText editTextEquation){
+		
+		editTextNumbers.setText("");
+		editTextEquation.setText("");
+		
+		computedResult = 0.0; 						
+		numberWasPressed = false;					
+		operationWasPressed = false; 				
+		initialState = true; 						
+		mathOperationIsAllowed = false; 			
+		isDelButtonAllowed = false;					
+		isDecimalButtonAllowed = true;
+		isSignButtonAllowed= true;
+		isComputationDone = false;					
+		refresh = false;							
+	}
+	
+	public void signedNumber(final EditText editTextInput){
+		
+		if((isSignButtonAllowed==true)&&(numberWasPressed == true)){
+			int dataCount = 0;
+			String numericalString = editTextInput.getText().toString();
+			if(numericalString.charAt(numericalString.length()-1)=='.')
+				isSignButtonAllowed = false;
+			
+			Double data = Double.parseDouble(editTextInput.getText().toString());
+			
+			
+			
+			dataCount++;
+			
+			switch(dataCount){
+				case 1:
+					data*=-1;
+					break;
+				case 2:
+					data*=-1;
+					dataCount=0;
+					break;
+				default:
+					break;		
+			}
+			
+			if(data % 1 == 0)
+				editTextInput.setText(Integer.toString(data.intValue()));
+			else
+				editTextInput.setText(Double.toString(data));
+		}
+		
+		
+		
 	}
 }
