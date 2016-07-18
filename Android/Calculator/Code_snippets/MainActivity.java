@@ -20,6 +20,7 @@ public class MainActivity extends Activity {
 		Button decimalButton = (Button)findViewById(R.id.decimalButton);
 		Button clearButton = (Button)findViewById(R.id.clearButton);
 		Button signButton = (Button)findViewById(R.id.signButton);
+		Button percentageButton = (Button)findViewById(R.id.percentageButton);
 
 		final EditText editTextNumbers = (EditText) findViewById(R.id.editTextNumbers);
 		final EditText editTextEquation = (EditText) findViewById(R.id.editTextEquation);
@@ -33,6 +34,7 @@ public class MainActivity extends Activity {
 		function.click(decimalButton, editTextNumbers, editTextEquation, "");
 		function.click(clearButton, editTextNumbers, editTextEquation, "");
 		function.click(signButton, editTextNumbers, editTextEquation, "");
+		function.handlePercentage(percentageButton, editTextNumbers);
 		
 
 	}
