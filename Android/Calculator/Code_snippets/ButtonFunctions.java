@@ -16,6 +16,7 @@ public class ButtonFunctions {
 	private boolean isSignButtonAllowed = true;
 	private boolean isComputationDone = false;					// states if the computation has been done.
 	private boolean refresh = false;							// states if it s needed to refresh the status of an object.
+	private int dataCount = 0;
 	
 	
 	//Function of every button in the calculator
@@ -73,10 +74,12 @@ public class ButtonFunctions {
 	public void mathOperations(final EditText editTextInput, final EditText editTextEquation, final String input){
 		
 		if (mathOperationIsAllowed == true) {
+
 			operationWasPressed = true;
 			numberWasPressed = false;
 			isDecimalButtonAllowed= true;
 			isSignButtonAllowed=true;
+			
 			
 				
 				if (initialState) {
@@ -95,13 +98,19 @@ public class ButtonFunctions {
 						editTextEquation.setText(Double.toString(computedResult) + input);
 					
 					isComputationDone = false;
-				}else{							
-					editTextEquation.setText(editTextEquation.getText() + editTextInput.getText().toString() + input);
+				}else{
+					if((dataCount == 1)&&(initialState == false)){
+						editTextEquation.setText(editTextEquation.getText() + "(" + editTextInput.getText().toString() + ")" + input);
+					}else{
+						editTextEquation.setText(editTextEquation.getText() + editTextInput.getText().toString() + input);
+					}
+					
 				}
 									
 				editTextInput.setText("");
+				dataCount = 0;
 				mathOperationIsAllowed = false;
-			
+				
 		} else {
 			editTextEquation.setText(editTextEquation.getText().toString());
 		}
@@ -112,8 +121,15 @@ public class ButtonFunctions {
 		
 		if ((operationWasPressed==true)&&(numberWasPressed==true)) {
 			computedResult += Double.parseDouble(editTextInput.getText().toString());
-			editTextEquation.setText(
-					editTextEquation.getText().toString() + editTextInput.getText().toString()+ "=");
+			
+			if(dataCount == 1){
+				editTextEquation.setText(
+						editTextEquation.getText().toString() + "(" + editTextInput.getText().toString()+ ")" + "=");
+			}else{
+				editTextEquation.setText(
+						editTextEquation.getText().toString() + editTextInput.getText().toString()+ "=");
+			}
+			
 			
 			Double data = computedResult;
 			
@@ -131,6 +147,7 @@ public class ButtonFunctions {
 			isDecimalButtonAllowed = true;
 			isSignButtonAllowed= true;
 			computedResult = 0.0;
+			dataCount = 0;
 		}			
 	}
 	
@@ -141,9 +158,19 @@ public class ButtonFunctions {
 			String numericalString = editTextInput.getText().toString();
 	
 			if (numericalString.length() > 1) {
-				if(numericalString.charAt(numericalString.length()-1)=='.')
+				if(numericalString.charAt(numericalString.length()-1)=='.'){
 					isDecimalButtonAllowed = true;
-				
+				}
+					
+				else if(numericalString.charAt(numericalString.length()-2)=='.'){
+					numericalString = numericalString.substring(0, numericalString.length() - 1);
+					isDecimalButtonAllowed = true;
+				}else if((numericalString.charAt(numericalString.length()-2)=='-')&&(dataCount == 1)){
+					numericalString=" ";
+					dataCount = 0;
+					isSignButtonAllowed = true;
+				}
+									
 				numericalString = numericalString.substring(0, numericalString.length() - 1);
 				editTextInput.setText(numericalString);
 			} 
@@ -152,6 +179,8 @@ public class ButtonFunctions {
 				isDelButtonAllowed = false;
 				numberWasPressed = false;
 				isDecimalButtonAllowed = true;
+				mathOperationIsAllowed = false;
+				dataCount = 0;
 			}			
 		}
 	}
@@ -182,21 +211,17 @@ public class ButtonFunctions {
 		isDecimalButtonAllowed = true;
 		isSignButtonAllowed= true;
 		isComputationDone = false;					
-		refresh = false;							
+		refresh = false;
+		dataCount = 0;
 	}
 	
+	//function for the sign of the numbers
 	public void signedNumber(final EditText editTextInput){
 		
 		if((isSignButtonAllowed==true)&&(numberWasPressed == true)){
-			int dataCount = 0;
-			String numericalString = editTextInput.getText().toString();
-			if(numericalString.charAt(numericalString.length()-1)=='.')
-				isSignButtonAllowed = false;
-			
+			dataCount = 0;			
 			Double data = Double.parseDouble(editTextInput.getText().toString());
-			
-			
-			
+				
 			dataCount++;
 			
 			switch(dataCount){
@@ -215,9 +240,6 @@ public class ButtonFunctions {
 				editTextInput.setText(Integer.toString(data.intValue()));
 			else
 				editTextInput.setText(Double.toString(data));
-		}
-		
-		
-		
+		}	
 	}
 }
