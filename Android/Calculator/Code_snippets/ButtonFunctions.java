@@ -16,11 +16,15 @@ public class ButtonFunctions {
 	private boolean isSignButtonAllowed = true;					// states if it is allowed to press the sign button.
 	private boolean isComputationDone = false;					// states if the computation has been done.
 	private boolean isPercentageButtonAllowed = true;
-	private boolean showPercentageSign = false;
+	private boolean isPercentageData = false;
 	private boolean refresh = false;							// states if it s needed to refresh the status of an object.
 	private int percentageDataCount = 0; 							// counter for the percentageData.
 	private int signedDataCount = 0;							// counter for the signedData.
 	private Double percentageData = 0.0;							// converted data into percentage value.
+	private int mathOperation = 0;
+	private int operationCount = 0;	
+	private Double answer = 0.0;
+
 	
 	
 	
@@ -35,10 +39,16 @@ public class ButtonFunctions {
 					
 					case R.id.addButton:
 						mathOperations(editTextInput,editTextEquation, input);
+						mathOperation = 1;
+						break;
+					
+					case R.id.divideButton:
+						mathOperations(editTextInput,editTextEquation, input);
+						mathOperation = 4;
 						break;
 					
 					case R.id.equalsButton:
-						compute(editTextInput,editTextEquation);
+						compute(editTextInput,editTextEquation);						
 						break;
 						
 					case R.id.signButton:
@@ -68,6 +78,7 @@ public class ButtonFunctions {
 						editTextInput.setText(editTextInput.getText() + input);
 						mathOperationIsAllowed = true;
 						isDelButtonAllowed = true;
+						isPercentageButtonAllowed = true;
 						break;
 				}
 				
@@ -84,47 +95,134 @@ public class ButtonFunctions {
 			numberWasPressed = false;
 			isDecimalButtonAllowed= true;
 			isSignButtonAllowed=true;
-							
-				if (initialState) {
+			operationCount++;
+			Double data = 0.0;
+			
+			switch(operationCount){
+				case 1:
 					computedResult = Double.parseDouble(editTextInput.getText().toString());
+					editTextEquation.setText(editTextEquation.getText().toString() + editTextInput.getText().toString() + input);
+					break;
+				case 2:
+					operation(editTextInput);
+					operationCount = 2;
+					break;
+				default:
+					break;
+			}
+				/*			
+				if (initialState == true) {
+					if(isPercentageData == true){
+						computedResult=percentageData;
+						
+					}else{
+						computedResult = Double.parseDouble(editTextInput.getText().toString());
+					}
+					
 					initialState = false;
 				} else {
-					computedResult += Double.parseDouble(editTextInput.getText().toString());
+					operation(editTextInput);
 				}
 				
 				if(isComputationDone == true){
-					Double data = computedResult;
 					
-					if(data % 1 == 0)
-						editTextEquation.setText(Integer.toString(computedResult.intValue()) + input);
-					else
-						editTextEquation.setText(Double.toString(computedResult) + input);
+					if(isPercentageData==true){
+						data = computedResult * 100;
+					}else{
+						data = computedResult;
+					}
+					
+					
+					if(data % 1 == 0){
+						if(isPercentageData==true){
+							editTextEquation.setText(Integer.toString(data.intValue()) + "%" + input);
+						}else{
+							editTextEquation.setText(Integer.toString(computedResult.intValue()) + input);
+						}
+					}else{
+						if(isPercentageData==true){
+							editTextEquation.setText(Double.toString(data) + "%" + input);
+						}else{
+							editTextEquation.setText(Double.toString(computedResult) + input);
+						}
+					}
+						
 					
 					isComputationDone = false;
 				}else{
-					if((signedDataCount == 1)&&(initialState == false)){
-						editTextEquation.setText(editTextEquation.getText() + "(" + editTextInput.getText().toString() + ")" + input);
-					}else{
-						editTextEquation.setText(editTextEquation.getText() + editTextInput.getText().toString() + input);
+					if((signedDataCount == 1)&&(operationCount>1)){
+						editTextEquation.setText(editTextEquation.getText().toString() + "(" + editTextInput.getText().toString() + ")" + input);
+					}
+					else{
+						editTextEquation.setText(editTextEquation.getText().toString() + editTextInput.getText().toString() + input);
 					}
 					
 				}
-									
+				*/					
 				editTextInput.setText("");
 				signedDataCount = 0;
+				percentageDataCount = 0;
 				mathOperationIsAllowed = false;
+				isPercentageData = false;
+				//mathOperation = 0;
 				
 		} else {
 			editTextEquation.setText(editTextEquation.getText().toString());
 		}
 	}
 	
+	private void operation(final EditText editTextInput){
+			
+		switch(mathOperation){
+			case 1:
+				if(isPercentageData == true){
+					computedResult+= percentageData;
+				}else{
+					computedResult+= Double.parseDouble(editTextInput.getText().toString());;
+				}
+				
+				break;
+			
+			case 2:
+				if(isPercentageData == true){
+					computedResult-= percentageData;
+				}else{
+					computedResult-= Double.parseDouble(editTextInput.getText().toString());;
+				}
+				
+				break;
+			
+			case 3:
+				if(isPercentageData == true){
+					computedResult*= percentageData;
+				}else{
+					computedResult*= Double.parseDouble(editTextInput.getText().toString());;
+				}
+				
+				break;
+			
+			case 4:
+				if(isPercentageData == true){
+					computedResult/= percentageData;
+				}else{
+					computedResult/= Double.parseDouble(editTextInput.getText().toString());;
+				}
+				
+				break;
+			default:
+				mathOperation = 0;
+				break;		
+		}		
+	}
+	
 	// function for the equal sign
 	public void compute(final EditText editTextInput, final EditText editTextEquation ){
 		
 		if ((operationWasPressed==true)&&(numberWasPressed==true)) {
-			computedResult += Double.parseDouble(editTextInput.getText().toString());
-			
+			operation(editTextInput);
+			editTextEquation.setText(
+					editTextEquation.getText().toString() + editTextInput.getText().toString()+ "=");
+			/*			
 			if(signedDataCount == 1){
 				editTextEquation.setText(
 						editTextEquation.getText().toString() + "(" + editTextInput.getText().toString()+ ")" + "=");
@@ -132,14 +230,16 @@ public class ButtonFunctions {
 				editTextEquation.setText(
 						editTextEquation.getText().toString() + editTextInput.getText().toString()+ "=");
 			}
-			
+			*/
+			editTextInput.setText(Double.toString(computedResult));
+			/*
 			Double data = computedResult;
 			
 			if(data % 1 == 0)
 				editTextInput.setText(Integer.toString(computedResult.intValue()));
 			else 
 				editTextInput.setText(Double.toString((double)Math.round(computedResult *100)/100));
-
+			*/
 			initialState = true;
 			numberWasPressed = false;
 			operationWasPressed = false;
@@ -148,9 +248,16 @@ public class ButtonFunctions {
 			refresh = true;
 			isDecimalButtonAllowed = true;
 			isSignButtonAllowed= true;
+			isPercentageData = false;
 			computedResult = 0.0;
+			percentageData = 0.0;
 			signedDataCount = 0;
-		}			
+			percentageDataCount = 0;
+			mathOperation = 0;
+			operationCount = 0;
+		}
+		
+		
 	}
 	
 	//function for the delete button
@@ -162,6 +269,11 @@ public class ButtonFunctions {
 			if (numericalString.length() > 1) {
 				if(numericalString.charAt(numericalString.length()-1)=='.'){
 					isDecimalButtonAllowed = true;
+				}else if(numericalString.charAt(numericalString.length()-1)=='%'){
+					isPercentageButtonAllowed = true;
+					isDecimalButtonAllowed = true;
+					isPercentageData = false;
+					percentageDataCount = 0;
 				}
 					
 				else if(numericalString.charAt(numericalString.length()-2)=='.'){
@@ -184,6 +296,7 @@ public class ButtonFunctions {
 				mathOperationIsAllowed = false;
 				signedDataCount = 0;
 				percentageDataCount = 0;
+				isPercentageButtonAllowed = true;
 			}			
 		}
 	}
@@ -193,6 +306,7 @@ public class ButtonFunctions {
 		
 		if((isDecimalButtonAllowed == true)&&(numberWasPressed == true)){
 			editTextInput.setText(editTextInput.getText().toString() + ".");
+			isPercentageButtonAllowed = false;
 			isDecimalButtonAllowed = false;
 		}			
 		else
@@ -213,11 +327,15 @@ public class ButtonFunctions {
 		isDelButtonAllowed = false;					
 		isDecimalButtonAllowed = true;
 		isSignButtonAllowed= true;
-		isComputationDone = false;					
+		isComputationDone = false;	
+		isPercentageData = false;
 		refresh = false;
 		signedDataCount = 0;
 		percentageDataCount = 0;
 		percentageData = 0.0;
+		mathOperation = 0;
+		operationCount= 0;
+		
 	}
 	
 	//function for the sign of the numbers
@@ -227,9 +345,9 @@ public class ButtonFunctions {
 			Double data;
 						
 			if(percentageDataCount == 1){
-				String numericalString = editTextInput.getText().toString();
-				numericalString = numericalString.substring(0, numericalString.length() - 1);
-				data = Double.parseDouble(numericalString);
+				//String numericalString = editTextInput.getText().toString();
+				//numericalString = numericalString.substring(0, numericalString.length() - 1);
+				data = percentageData *100;
 				percentageDataCount = 0;
 			}else{
 				data = Double.parseDouble(editTextInput.getText().toString());
@@ -250,7 +368,7 @@ public class ButtonFunctions {
 			}
 			
 			if(data % 1 == 0){
-				if(showPercentageSign == true){
+				if(isPercentageData == true){
 					editTextInput.setText(Integer.toString(data.intValue())+ "%");
 					percentageDataCount = 1;
 				}else{
@@ -261,16 +379,14 @@ public class ButtonFunctions {
 			}
 				
 			else{
-				if(showPercentageSign == true){
+				if(isPercentageData == true){
 					editTextInput.setText(Double.toString(data)+ "%"); 
 					percentageDataCount = 1;
 				}else{
 					editTextInput.setText(Double.toString(data));
 					percentageDataCount = 0;
-				}
-				
-			}
-				
+				}				
+			}				
 		}	
 	}
 	
@@ -279,18 +395,20 @@ public class ButtonFunctions {
 			
 			@Override
 			public void onClick(View v) {
-				if((isPercentageButtonAllowed == true)&&(numberWasPressed == true)){
+				if((isPercentageButtonAllowed == true)&&(numberWasPressed == true)&&(operationWasPressed==true)){
+					isSignButtonAllowed = false;
+					isDecimalButtonAllowed = false;
 					percentageDataCount++;
 					
 					switch(percentageDataCount){
 						case 1:
 							percentageData = Double.parseDouble(editTextInput.getText().toString())/100;
 							editTextInput.setText(editTextInput.getText().toString() + "%");
-							showPercentageSign = true;
+							isPercentageData = true;
 							break;
 						case 2:
 							percentageData*=100;
-							showPercentageSign = false;
+							isPercentageData = false;
 							if(percentageData % 1 == 0){
 								editTextInput.setText(Integer.toString(percentageData.intValue()));
 							}else{

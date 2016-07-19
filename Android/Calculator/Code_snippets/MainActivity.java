@@ -12,9 +12,11 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
+		Button num0Button = (Button) findViewById(R.id.num0Button);
 		Button num1Button = (Button) findViewById(R.id.num1Button);
 		Button addButton = (Button) findViewById(R.id.addButton);
+		Button divideButton = (Button) findViewById(R.id.divideButton);
 		Button equalsButton = (Button) findViewById(R.id.equalsButton);
 		Button delButton = (Button) findViewById(R.id.delButton);
 		Button decimalButton = (Button)findViewById(R.id.decimalButton);
@@ -27,8 +29,12 @@ public class MainActivity extends Activity {
 		
 		ButtonFunctions function = new ButtonFunctions();
 		
+		function.click(num0Button, editTextNumbers, editTextEquation, "0");
 		function.click(num1Button, editTextNumbers, editTextEquation, "1");
+		
 		function.click(addButton, editTextNumbers, editTextEquation, "+");
+		function.click(divideButton, editTextNumbers, editTextEquation, "÷");
+		
 		function.click(equalsButton, editTextNumbers, editTextEquation, "");
 		function.click(delButton, editTextNumbers, editTextEquation, "");
 		function.click(decimalButton, editTextNumbers, editTextEquation, "");
