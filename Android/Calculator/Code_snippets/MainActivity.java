@@ -2,9 +2,10 @@ package com.calculator;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
+
 import android.widget.Button;
 import android.widget.EditText;
+
 
 public class MainActivity extends Activity {
 
@@ -33,14 +34,14 @@ public class MainActivity extends Activity {
 		function.click(num1Button, editTextNumbers, editTextEquation, "1");
 		
 		function.click(addButton, editTextNumbers, editTextEquation, "+");
-		function.click(divideButton, editTextNumbers, editTextEquation, "÷");
+		function.click(divideButton, editTextNumbers, editTextEquation, "/");
 		
-		function.click(equalsButton, editTextNumbers, editTextEquation, "");
+		function.click(equalsButton, editTextNumbers, editTextEquation, "=");
 		function.click(delButton, editTextNumbers, editTextEquation, "");
 		function.click(decimalButton, editTextNumbers, editTextEquation, "");
 		function.click(clearButton, editTextNumbers, editTextEquation, "");
 		function.click(signButton, editTextNumbers, editTextEquation, "");
-		function.handlePercentage(percentageButton, editTextNumbers);
+		function.handlePercentage(percentageButton, editTextNumbers, editTextEquation);
 		
 
 	}
