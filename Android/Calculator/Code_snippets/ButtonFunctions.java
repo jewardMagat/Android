@@ -18,10 +18,11 @@ public class ButtonFunctions {
 	private boolean refresh = false;							// states if it s needed to refresh the status of an object.
 	private boolean initialState = false;
 	private boolean changeOperationIsAllowed = false;	
+//	private boolean deleteButtonWasPressed = false;
 	private Double percentageData = 0.0;							// converted data into percentage value.		
 	private int inputCount = 0;
 
-	private boolean isSignedData = false;
+//	private boolean isSignedData = false;
 	
 
 	
@@ -105,7 +106,6 @@ public class ButtonFunctions {
 			isSignButtonAllowed=true;
 			inputNumber.setLength(0);
 			inputCount = 0;
-			isSignedData = false;
 									
 			if(isComputationDone==true){
 				refresh=false;
@@ -126,8 +126,7 @@ public class ButtonFunctions {
 			}
 			
 			changeOperationIsAllowed = true;
-		}
-			
+		}			
 	}
 	
 	// function for the equal sign
@@ -151,7 +150,7 @@ public class ButtonFunctions {
 				if(result % 1 == 0){
 					editTextInput.setText(Integer.toString(result.intValue()));
 				}else{
-					editTextInput.setText(Double.toString((double) Math.round(result * 100) / 100));
+					editTextInput.setText(Double.toString((double) Math.round(result * 10000) / 10000));
 				}				
 			}catch(Exception e){
 				editTextEquation.setText("Syntax Error");
@@ -161,11 +160,16 @@ public class ButtonFunctions {
 			numberWasPressed = false;
 			operationWasPressed = false;
 			isComputationDone = true;
+			isPercentageButtonAllowed = false;
 			refresh = true;
+			changeOperationIsAllowed = false;
+			percentageData = 0.0;
+			inputCount = 0;
 			isDecimalButtonAllowed = true;
 			isSignButtonAllowed= true;
+			inputNumber.setLength(0);
 			percentageData = 0.0;
-			isSignedData = false;
+			initialState = false;
 		}		
 	}
 	
@@ -179,7 +183,7 @@ public class ButtonFunctions {
 		if(isComputationDone==true){
 			clearContents(editTextInput, editTextEquation);
 		}else{
-			
+			numberWasPressed=false;
 			String numericalString = editTextInput.getText().toString();
 			
 			if (numericalString.length() > 1) {
@@ -189,7 +193,7 @@ public class ButtonFunctions {
 					isPercentageButtonAllowed = false;
 				}else if((numericalString.charAt(numericalString.length()-1)=='+')||(numericalString.charAt(numericalString.length()-1)=='-')
 						||(numericalString.charAt(numericalString.length()-1)=='x')||(numericalString.charAt(numericalString.length()-1)=='÷')){
-					
+					inputNumber.setLength(0);
 					changeOperationIsAllowed = false;
 				}
 			
@@ -241,8 +245,6 @@ public class ButtonFunctions {
 		inputCount = 0;
 		inputNumber.setLength(0);
 		initialState = false;
-		isSignedData = false;
-
 	}
 	
 	//function for the sign of the numbers
@@ -264,7 +266,6 @@ public class ButtonFunctions {
 						break;
 					case '-': 
 						symbol = "+";
-						signedDataCounter = 0;
 						break;
 					default:
 						break;
@@ -283,61 +284,20 @@ public class ButtonFunctions {
 			
 			@Override
 			public void onClick(View v) {
-				if((isPercentageButtonAllowed == true)&&(numberWasPressed == true)&&(operationWasPressed==true)){
+				if((isPercentageButtonAllowed == true)&&(numberWasPressed == true)){
 					isSignButtonAllowed = false;
 					isDecimalButtonAllowed = false;
 					
-					Double result = 0.0;
-					
+					percentageData = Double.parseDouble(inputNumber.toString())/100;				
 					String initialData = editTextInput.getText().toString();
-					String initialFilter = initialData.replaceAll("x", "*");
-					String secondFilter = initialFilter.replaceAll("÷", "/");					
-					String finalFilter = secondFilter.substring(0, secondFilter.length() - inputCount);
-					String outputString = initialData.substring(0, initialData.length() - inputCount);
-					
-					percentageData = Double.parseDouble(inputNumber.toString())/100;
-					//editTextEquation.setText(finalFilter + Double.toString(percentageData));
-					
-					Expression exp = new ExpressionBuilder(finalFilter + Double.toString(percentageData)).build();
-					
-					try{
-						result = exp.evaluate();
-						
-						if(isSignedData==true){
-							editTextEquation.setText(outputString + inputNumber.toString() + ")%");
-						}else{
-							editTextEquation.setText(outputString + inputNumber.toString()+ "%");
-						}						
-						
-						editTextInput.setText("");
-						
-						if(result % 1 == 0){
-							if(isSignedData==true){
-								editTextInput.setText(Integer.toString(result.intValue()*-1));
-							}else{
-								editTextInput.setText(Integer.toString(result.intValue()));
-							}						
-						}else{
-							if(isSignedData==true){
-								editTextInput.setText(Double.toString(((double) Math.round(result * 100) / 100)*-1));
-							}else{
-								editTextInput.setText(Double.toString((double) Math.round(result * 100) / 100));
-							}							
-						}				
-					}catch(Exception e){
-						editTextEquation.setText("Syntax Error");
-						editTextInput.setText("");
-					}
-										
-					numberWasPressed = false;
-					operationWasPressed = false;
-					isComputationDone = true;
-					refresh = true;
+					String finalFilter = initialData.substring(0, initialData.length() - inputCount);					
+					editTextInput.setText(finalFilter + Double.toString((double)Math.round(percentageData*10000)/10000));
+			
 					isSignButtonAllowed= false;
 					percentageData = 0.0;			
 					inputCount = 0;
+					inputNumber.setLength(0);
 					isPercentageButtonAllowed = false;	
-					isSignedData = false;
 				}			
 			}
 		});
