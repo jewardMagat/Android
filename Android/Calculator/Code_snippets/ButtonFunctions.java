@@ -14,19 +14,13 @@ public class ButtonFunctions {
 	private boolean isDecimalButtonAllowed = true;				// states if is allowed to press the decimal button.
 	private boolean isSignButtonAllowed = true;					// states if it is allowed to press the sign button.
 	private boolean isComputationDone = false;					// states if the computation has been done.
-	private boolean isPercentageButtonAllowed = true;
+	private boolean isPercentageButtonAllowed = true;			// states if the percentageButton is allowed to be pressed.
 	private boolean refresh = false;							// states if it s needed to refresh the status of an object.
-	private boolean initialState = false;
-	private boolean changeOperationIsAllowed = false;	
-//	private boolean deleteButtonWasPressed = false;
-	private Double percentageData = 0.0;							// converted data into percentage value.		
-	private int inputCount = 0;
-
-//	private boolean isSignedData = false;
-	
-
-	
-	private StringBuilder inputNumber = new StringBuilder();
+	private boolean initialState = false;						// states if it is the initial state of the app.
+	private boolean changeOperationIsAllowed = false;			// states if change of operation is allowed.
+	private Double percentageData = 0.0;						// converted data into percentage value.		
+	private int inputCount = 0;									// numeric input count of the calculator.	
+	private StringBuilder inputNumber = new StringBuilder();	// holds the inputNumber after an operation was pressed.
 		
 	//Function of every button in the calculator
 	public void click(Button button, final EditText editTextInput, final EditText editTextEquation, final String input){
@@ -106,6 +100,11 @@ public class ButtonFunctions {
 			isSignButtonAllowed=true;
 			inputNumber.setLength(0);
 			inputCount = 0;
+			
+			if((numericalString.charAt(numericalString.length()-1)=='+')||(numericalString.charAt(numericalString.length()-1)=='-')
+					||(numericalString.charAt(numericalString.length()-1)=='x')||(numericalString.charAt(numericalString.length()-1)=='÷')){
+				changeOperationIsAllowed = true;	
+			}
 									
 			if(isComputationDone==true){
 				refresh=false;
@@ -119,12 +118,7 @@ public class ButtonFunctions {
 			}else{
 				editTextInput.setText(numericalString + input);
 			}
-			
-			if((numericalString.charAt(numericalString.length()-1)=='+')||(numericalString.charAt(numericalString.length()-1)=='-')
-					||(numericalString.charAt(numericalString.length()-1)=='x')||(numericalString.charAt(numericalString.length()-1)=='÷')){
-				changeOperationIsAllowed = true;	
-			}
-			
+							
 			changeOperationIsAllowed = true;
 		}			
 	}
@@ -169,7 +163,6 @@ public class ButtonFunctions {
 			isSignButtonAllowed= true;
 			inputNumber.setLength(0);
 			percentageData = 0.0;
-			initialState = false;
 		}		
 	}
 	
@@ -204,10 +197,18 @@ public class ButtonFunctions {
 			else if (numericalString.length() <= 1) {
 				editTextInput.setText("");
 				
-				inputNumber.setLength(0);
-				numberWasPressed = false;
+				numberWasPressed = false;					
+				operationWasPressed = false; 																	
 				isDecimalButtonAllowed = true;
-				isPercentageButtonAllowed = false;				
+				isSignButtonAllowed= true;
+				isComputationDone = false;
+				isPercentageButtonAllowed = false;
+				refresh = false;
+				changeOperationIsAllowed = false;
+				percentageData = 0.0;
+				inputCount = 0;
+				inputNumber.setLength(0);
+				initialState = false;						
 			}
 		}
 	}
@@ -250,33 +251,42 @@ public class ButtonFunctions {
 	//function for the sign of the numbers
 	public void signedNumber(final EditText editTextInput){
 		
-		if(isSignButtonAllowed==true){
-			
-			String numericalString = editTextInput.getText().toString();
-			
-			if((operationWasPressed==true)&&(numericalString.charAt(numericalString.length()-1)=='+'||
-					(numericalString.charAt(numericalString.length()-1)=='-'))){
+		if(isComputationDone==true){
+			isSignButtonAllowed = false;
+		}else{
+			if(isSignButtonAllowed==true){
 				
-				char operationSymbol= numericalString.charAt(numericalString.length()-1);
-				String symbol = "";
+				String numericalString = editTextInput.getText().toString();
 				
-				switch(operationSymbol){
-					case '+':
-						symbol = "-";
-						break;
-					case '-': 
-						symbol = "+";
-						break;
-					default:
-						break;
-				}
-				
-				numericalString = numericalString.substring(0, numericalString.length() - 1);
-				editTextInput.setText(numericalString + symbol);				
-			}else{
-				editTextInput.setText(numericalString + "-");
-			}			
-		}	
+				if((operationWasPressed==true)&&(numericalString.charAt(numericalString.length()-1)=='+'||
+						(numericalString.charAt(numericalString.length()-1)=='-'))){
+					
+					char operationSymbol= numericalString.charAt(numericalString.length()-1);
+					String symbol = "";
+					
+					switch(operationSymbol){
+						case '+':
+							symbol = "-";
+							break;
+						case '-': 
+							if((numericalString.charAt(numericalString.length()-2)=='x')
+									||(numericalString.charAt(numericalString.length()-2)=='÷')){
+								symbol = "";
+							}else{
+								symbol = "+";						
+							}
+							break;
+						default:
+							break;
+					}
+					
+					numericalString = numericalString.substring(0, numericalString.length() - 1);
+					editTextInput.setText(numericalString + symbol);				
+				}else{
+					editTextInput.setText(numericalString + "-");
+				}			
+			}	
+		}						
 	}
 	
 	public void handlePercentage(Button button, final EditText editTextInput, final EditText editTextEquation){
