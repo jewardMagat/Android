@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
 		editTextInput.setKeyListener(null);
 		editTextEquation.setKeyListener(null);
 		
-		Typeface typeface=Typeface.createFromAsset(getAssets(), "fonts/Istok_regular.ttf");
+		Typeface typeface=Typeface.createFromAsset(getAssets(), "fonts/liberationsans_regular.ttf");
 		editTextInput.setTypeface(typeface);
 		editTextEquation.setTypeface(typeface);
 		
